@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+   <title>Anti-Counterfeit</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+          integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,700' rel='stylesheet' type='text/css'>
+
+    <style>
+        body{
+
+            background-image: linear-gradient(to right,#33ccff, #ff99cc);
+            margin-top: 5%;
+            padding: 2%;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<button><a href="{% url 'logout' %}" class="nav-link">logout</a></button>
+
+<div class="container pt-3">
+{{ usertype }}
+
+ {% if usertype == 'Distributor' %}
+     <div class="alert alert-dark" role="alert">
+    {{message}}
+    </div>
+    {% if carton != '' %}
+     <div class="alert alert-success">
+            Product Name : {{ carton.product_name }}
+    </div>
+    {% endif %}
+
+ {% elif usertype == 'DeliveryPerson' %}
+     {% if message != '' %}
+     <div class="alert alert-dark" role="alert">
+            {{message}}
+     {% endif %}
+    </div>
+     {% if carton != '' %}
+     <div class="alert alert-success">
+            Product Name : {{ carton.product_name }}
+    </div>
+    {% endif %}
+     {% if form != '' %}
+         <form method="POST">
+         {% csrf_token %}
+         <div>
+              <label>{{ name }} : Add The Pharmacist Details</label>
+         </div>
+
+         {{form.details}}
+          <div>
+             <button type="submit" class="btn btn-success">Submit Details</button>
+         </div>
+     </form>
+    {% endif %}
+
+ {% else %}
+     {{ message }}
+  {% endif %}
+</div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,50 @@
+{% load static %}
+{% load crispy_forms_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>E-CHECKUP</title>
+   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css"
+          integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
+    <style>
+        body {
+            background-image: linear-gradient(to right,#33ccff, #ff99cc);
+            font-family: 'Roboto', sans-serif;
+            color: white;
+            margin: 50px;
+        }
+        .first{
+            background: #1A2226;
+            padding: 10%;
+        }
+        h2{
+            text-align: center;
+            font-size: 30px;
+            letter-spacing: 2px;
+            margin-top: 15px;
+            font-weight: bold;
+            color: #1A2226;
+        }
+       </style>
+</head>
+<body>
+<h2>LogIn</h2>
+<div class="container">
+
+    <div class="container first">
+     <form method="POST">
+         {% csrf_token %}
+         {{form | crispy}}
+         <div class="login-btm login-button">
+             <button type="submit" class="btn btn-outline-primary" name="login_button">LOGIN</button>
+         </div>
+     </form>
+    </div>
+    </div>
+</body>
+</html>
