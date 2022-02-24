@@ -1,0 +1,11 @@
+admin//superuser
+pw:admin
+
+man1//manufacturer
+pw:man1man1
+
+dis1//distributor
+pw:dis1dis1
+
+del1//delivery person
+pw:del1del1

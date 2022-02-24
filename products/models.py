@@ -3,7 +3,6 @@ from userManagement.models import Manufacturer,Distributor,DeliveryPerson
 
 # Create your models here.
 
-#product_price
 class Carton(models.Model):
     carton_id = models.CharField(primary_key=True,max_length=20)
     manufacturer_id = models.ForeignKey(Manufacturer,on_delete=models.DO_NOTHING)
