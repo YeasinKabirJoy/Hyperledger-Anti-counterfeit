@@ -70,7 +70,7 @@ def add_carton(request):
                     response = requests.post(url='http://192.168.0.170:3000/product',
                                              json={
                                                  "product_id":str(product.product_id),
-                                                 "carton_id":str(product.carton_id)
+                                                 "carton_id":str(carton.carton_id)
                                              }
                                              )
                     print(response.status_code)
