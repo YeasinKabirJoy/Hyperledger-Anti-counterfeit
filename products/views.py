@@ -17,6 +17,7 @@ import requests
 # Create your views here.
 @login_required
 def add_carton(request):
+    msg = ''
     if request.user.type == Types.Manufacturer or request.user.type == Types.Manufacturer:
         start_time = time.time()
         form = AddCartonAndProductForm
@@ -28,6 +29,19 @@ def add_carton(request):
 
                 quantity = request.POST['product_quantity']
                 cid = request.POST['carton_id']
+
+                response = requests.post(url='http://192.168.0.122:3000/cartonDetails',
+                                         json={
+                                             "carton_id": str(cid)
+                                         }
+                                         )
+                if response.status_code == 200:
+                    msg = 'carton already exists'
+                    context = {
+                        'form':AddCartonAndProductForm,
+                        'message': msg
+                    }
+                    return render(request, 'addCarton.html', context)
 
                 with open('encrypt_private_key.txt', 'r') as f:
                     content = f.read()
@@ -67,7 +81,7 @@ def add_carton(request):
                     encrypted_product_id = encrypt_box.encrypt(pad(pid.encode('utf-8'),10,style='pkcs7'))
                     product= Product(product_id=pid,carton_id=carton)
 
-                    response = requests.post(url='http://192.168.0.170:3000/product',
+                    response = requests.post(url='http://192.168.0.122:3000/product',
                                              json={
                                                  "product_id":str(product.product_id),
                                                  "carton_id":str(carton.carton_id)
@@ -90,20 +104,21 @@ def add_carton(request):
                     # img = qrcode.make(encrypted_product_id)
                     # img.save("{}.png".format(pid))
 
-                response = requests.post(url='http://192.168.0.170:3000/carton',
+                response = requests.post(url='http://192.168.0.122:3000/carton',
                                          json={
                                                 "carton_id": str(carton.carton_id),
                                                 "manufacturer_id": str(request.user.username),
                                                 "product_name":str(carton.product_name),
                                                 "product_quantity": int(carton.product_quantity),
                                                 "product_price": int(carton.product_price),
-                                                "production_date":str(carton.production_date),
-                                                "expiry_date":str(carton.expiry_date)
+                                                "production_date":str(carton.production_date.strftime("%d-%m-%yyyy")),
+                                                "expiry_date":str(carton.expiry_date.strftime("%d-%m-%yyyy"))
                                             }
                                          )
                 print(response.status_code)
                 form=AddCartonAndProductForm()
         context = {
+            'message': msg,
             'form': form,
         }
         print("--- %s seconds ---" % (time.time() - start_time))
@@ -139,7 +154,7 @@ def add_carton_details(request, cid):
             }
             return render(request, 'addCartonSupplyChainInformation.html', context)
 
-        response = requests.post(url='http://192.168.0.170:3000/cartonDetails',
+        response = requests.post(url='http://192.168.0.122:3000/cartonDetails',
                                       json={
                                           "carton_id": str(decrypt_message),
                                       })
@@ -157,11 +172,11 @@ def add_carton_details(request, cid):
 
 
         if carton["Number_Of_Scan"] == 0:
-            requests.post(url='http://192.168.0.170:3000/updateCartonDistributor',
+            requests.post(url='http://192.168.0.122:3000/updateCartonDistributor',
                           json={
                               "carton_id": str(decrypt_message),
                               "distributor": str(request.user.username),
-                              "distributor_scan_date": str(datetime.date.today())
+                              "distributor_scan_date": str(datetime.date.today().strftime("%d-%m-%yyyy"))
 
                           })
             message= str(request.user.name) + " : " + "Your Information Has  Successfully Stored"
@@ -193,7 +208,7 @@ def add_carton_details(request, cid):
             }
             return render(request, 'addCartonSupplyChainInformation.html', context)
 
-        response = requests.post(url='http://192.168.0.170:3000/cartonDetails',
+        response = requests.post(url='http://192.168.0.122:3000/cartonDetails',
                                  json={
                                      "carton_id": str(decrypt_message),
                                  })
@@ -222,11 +237,11 @@ def add_carton_details(request, cid):
                 details = data.get('details')
 
                 if carton["Number_Of_Scan"] == 1:
-                    requests.post(url='http://192.168.0.170:3000/updateCartonDelivery',
+                    requests.post(url='http://192.168.0.122:3000/updateCartonDelivery',
                                   json={
                                       "carton_id": str(decrypt_message),
                                       "delivery_person":str(request.user.username),
-                                      "delivery_date":str(datetime.date.today()),
+                                      "delivery_date":str(datetime.date.today().strftime("%d-%m-%yyyy")),
                                       "pharmacist_details":str(details)
 
                                   })
@@ -270,12 +285,12 @@ def product_details(request,pid):
         return render(request, 'addCartonSupplyChainInformation.html', context)
 
 
-    response1 = requests.post(url='http://192.168.0.170:3000/cartonDetails',
+    response1 = requests.post(url='http://192.168.0.122:3000/cartonDetails',
                                json={
                                    "carton_id": str(decrypt_message[0:5]),
                                })
 
-    response2 = requests.post(url='http://192.168.0.170:3000/productDetails',
+    response2 = requests.post(url='http://192.168.0.122:3000/productDetails',
                              json={
                                  "product_id": str(decrypt_message),
                              })
@@ -290,14 +305,14 @@ def product_details(request,pid):
         product = response2.json()
     if product["Number_Of_Scan"] == 0:
         message = '1st Scan. Please Check Other Information'
-        requests.post(url='http://192.168.0.170:3000/updateProduct',
+        requests.post(url='http://192.168.0.122:3000/updateProduct',
                       json={
                           "product_id": str(decrypt_message),
                       })
     else:
         message = 'This Product has scanned before.'
 
-        requests.post(url='http://192.168.0.170:3000/updateProduct',
+        requests.post(url='http://192.168.0.122:3000/updateProduct',
                       json={
                           "product_id": str(decrypt_message),
                       })

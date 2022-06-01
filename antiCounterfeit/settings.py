@@ -122,7 +122,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 DATE_INPUT_FORMATS = [
     '%d-%m-%Y',
-    '%Y-%m-%d'
+    # '%Y-%m-%d'
 ]
 
 # Internationalization

@@ -28,8 +28,16 @@
 </head>
 <body>
 <button><a href="{% url 'logout' %}" class="nav-link">logout</a></button>
+
 <div class="container">
+
  {% if usertype == 'Manufacturer' %}
+     {% if message != '' %}
+<div class="alert alert-danger" role="alert">
+    {{ message }}
+</div>
+{% endif %}
+
   {{ form.media }}
     <form method="post">
         {% csrf_token %}
@@ -38,6 +46,9 @@
     </form>
    {% else %}
      <div class="container">
+
+     <div class="container">
+
   <div class="card bg-danger text-white" style="text-align: center">
     <div class="card-body">{{ message}}</div>
   </div>
